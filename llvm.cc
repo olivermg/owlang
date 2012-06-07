@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <string>
 #include <map>
+#include <iostream>
 
 #include <llvm/LLVMContext.h>
 #include <llvm/BasicBlock.h>
@@ -17,13 +18,21 @@ int main( int argc, char* argv[] ) {
 	llvm::IRBuilder<> builder( Context );
 	std::map<std::string, llvm::Value*> namedValue;
 
-
 	theModule = new llvm::Module( "my cool prog", Context );
 
-	llvm::FunctionType *mainType = llvm::TypeBuilder<llvm::types::i<32>(llvm::types::i<32>), true>::get( Context );
-	llvm::Function *mainFunc = llvm::Function::Create( mainType, llvm::Function::ExternalLinkage, "main", theModule );
+	// define function type for main:
+	llvm::FunctionType *mainType1 = llvm::TypeBuilder<llvm::types::i<32>(llvm::types::i<32>), true>::get( Context );
+
+	// another way how to achieve the same (maybe the more generic way):
+	std::vector<llvm::Type*> argTypes;
+	argTypes.push_back( llvm::Type::getInt32Ty( Context ) );
+	llvm::FunctionType *mainType2 = llvm::FunctionType::get( llvm::Type::getInt32Ty( Context ), argTypes, false );
+
+	// create main function:
+	llvm::Function *mainFunc = llvm::Function::Create( mainType2, llvm::Function::ExternalLinkage, "main", theModule );
 	llvm::BasicBlock* bb = llvm::BasicBlock::Create( Context, "main", mainFunc );
 
+	// define some values and do arithmetics:
 	llvm::Value* val1 = llvm::ConstantInt::get( Context, llvm::APInt( 32, 1 ) );
 	llvm::Value* val2 = llvm::ConstantInt::get( Context, llvm::APInt( 32, 233 ) );
 	llvm::Value* valAdd = builder.CreateAdd( val1, val2, "myadd1" );
@@ -43,12 +52,8 @@ int main( int argc, char* argv[] ) {
 	builder.CreateCondBr( val1EQval2, bbl, bbr );
 	builder.CreateRet( valAdd );
 
+	// dump the entire IR program:
 	theModule->dump();
-	//mainFunc->dump();
-	//bb->dump();
-	//val1->dump();
-	//val2->dump();
-	//valAdd->dump();
 
 	return 0;
 }
