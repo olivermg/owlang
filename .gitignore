@@ -1,8 +1,4 @@
 .*.swp
 a.out
 lexer_parser/parser
-lexer_parser/parser.tab.c
-lexer_parser/parser.tab.o
-lexer_parser/lex.yy.c
-lexer_parser/lex.yy.o
 

@@ -1,14 +1,17 @@
 %{
-#include "parser.tab.h"
+#include <stdio.h>
+#include "parser.hh"
 %}
 
 %%
 
-\(							return OPAREN;
-\)							return CPAREN;
-[0-9]+						return NUMBER;
-[a-zA-Z][a-zA-Z0-9]*		return IDENTIFIER;
-[ \t\n]+					;
+"deffn"						{ return DEFFN; }
+\(							{ return OPAREN; }
+\)							{ return CPAREN; }
+[0-9]+						{ yylval.number = atoi( yytext ); return NUMBER; }
+[a-zA-Z][a-zA-Z0-9]*		{ yylval.string = yytext; return IDENTIFIER; }
+[ \t\n]+					/* ignore whitespace */;
+.							{ fprintf( stderr, "unknown token found.\n" ); yyterminate(); }
 
 %%
 
