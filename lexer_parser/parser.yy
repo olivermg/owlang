@@ -1,8 +1,17 @@
 %{
 #include <iostream>
 #include <vector>
+#include "nodes.hh"
 
-std::vector<std::string> symbols;
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::vector;
+using std::string;
+
+vector<string> symbols;
+vector<Node*> nodes;
+
 int level = 0;
 
 extern "C" {
@@ -16,20 +25,40 @@ extern int yydebug;
 extern int yyparse( void );
 
 void yyerror( const char* str ) {
-	std::cerr <<  "error: " << str << std::endl;
+	cerr <<  "error: " << str << endl;
 }
 
 static void store_symbol( const char* symbolname ) {
-	std::string name( symbolname );
+	string name( symbolname );
 	symbols.push_back( name );
 }
 
 static void print_symbols() {
-	std::cout << "stored symbols:" << std::endl;
+	cout << "stored symbols:" << endl;
 	symbols.begin();
 	while ( !symbols.empty() ) {
-		std::cout << "  " << symbols.back() << std::endl;
+		cout << "  " << symbols.back() << endl;
 		symbols.pop_back();
+	}
+}
+
+static void store_node( const char* name, const char* type ) {
+	string _name( name );
+	string _type( type );
+
+	Node* node = new Node();
+	node->name = _name;
+	node->type = _type;
+	nodes.push_back( node );
+}
+
+static void print_nodes() {
+	cout << "stored nodes:" << endl;
+	nodes.begin();
+	while ( !nodes.empty() ) {
+		Node* node = nodes.back();
+		cout << "  " << node->name << ", " << node->type << endl;
+		nodes.pop_back();
 	}
 }
 
@@ -37,6 +66,7 @@ int main( int argc, char* argv[] ) {
 	//yydebug = 1;
 	yyparse();
 	print_symbols();
+	print_nodes();
 	return 0;
 }
 %}
@@ -65,14 +95,14 @@ expression:
 	;
 
 operation:
-	DEFFN function { std::cout << level << " found definition for function: " << $2 << std::endl; store_symbol( $2 ); } args
-	| function { std::cout << level << " found function call: " << $1 << std::endl; } args
+	DEFFN function { cout << level << " found definition for function: " << $2 << endl; store_symbol( $2 ); store_node( $2, "function" ); } args
+	| function { cout << level << " found function call: " << $1 << endl; } args
 	;
 
 args:
-	| args IDENTIFIER { std::cout << level << " args identifier: " << $2 << std::endl; }
-	| args NUMBER { std::cout << level << " args number: " << $2 << std::endl; }
-	| args { std::cout << level << " args expression begin" << std::endl; } expression { std::cout << level << " args expression end" << std::endl; }
+	| args IDENTIFIER { cout << level << " args identifier: " << $2 << endl; }
+	| args NUMBER { cout << level << " args number: " << $2 << endl; }
+	| args { cout << level << " args expression begin" << endl; } expression { cout << level << " args expression end" << endl; }
 	;
 
 function: IDENTIFIER
