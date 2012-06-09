@@ -42,13 +42,10 @@ static void print_symbols() {
 	}
 }
 
-static void store_node( const char* name, const char* type ) {
-	string _name( name );
-	string _type( type );
+static void store_node_deffn( const char* funcname ) {
+	string _name( funcname );
 
-	Node* node = new Node();
-	node->name = _name;
-	node->type = _type;
+	FunctionDefinitionNode* node = new FunctionDefinitionNode( _name );
 	nodes.push_back( node );
 }
 
@@ -57,7 +54,11 @@ static void print_nodes() {
 	nodes.begin();
 	while ( !nodes.empty() ) {
 		Node* node = nodes.back();
-		cout << "  " << node->name << ", " << node->type << endl;
+		cout << "  " << typeid( *node ).name();
+		//if ( typeid) {
+		//cout << "  " << node->name << ", " << node->type << endl;
+		//}
+		cout << endl;
 		nodes.pop_back();
 	}
 }
@@ -95,7 +96,7 @@ expression:
 	;
 
 operation:
-	DEFFN function { cout << level << " found definition for function: " << $2 << endl; store_symbol( $2 ); store_node( $2, "function" ); } args
+	DEFFN function { cout << level << " found definition for function: " << $2 << endl; store_symbol( $2 ); store_node_deffn( $2 ); } args
 	| function { cout << level << " found function call: " << $1 << endl; } args
 	;
 

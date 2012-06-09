@@ -3,9 +3,8 @@ a.out
 lexer_parser/parser
 lexer_parser/parser.cc
 lexer_parser/parser.hh
-lexer_parser/parser.o
 lexer_parser/parser.dot
 lexer_parser/parser.output
 lexer_parser/lexer.c
-lexer_parser/lexer.o
+lexer_parser/*.o
 

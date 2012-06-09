@@ -1,14 +1,17 @@
 CC = clang
 CXX = clang++
-CFLAGS = -Wall -DYYDEBUG=1
-LDFLAGS = -Wall
+CFLAGS = -Wall -DYYDEBUG=1 `llvm-config --cppflags`
+LDFLAGS = -Wall `llvm-config --ldflags --libs core`
 LEX = flex
 YACC = bison
 
 all: parser
 
-parser: lexer.o parser.o
-	$(CXX) -o parser lexer.o parser.o $(LDFLAGS)
+parser: lexer.o parser.o nodes.o
+	$(CXX) -o parser lexer.o parser.o nodes.o $(LDFLAGS)
+
+nodes.o: nodes.cc nodes.hh
+	$(CXX) -c $(CFLAGS) nodes.cc
 
 lexer.o: lexer.c parser.cc
 	$(CC) -c $(CFLAGS) lexer.c
