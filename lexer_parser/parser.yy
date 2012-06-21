@@ -1,6 +1,7 @@
 %{
 #include <iostream>
 #include <vector>
+#include <typeinfo>
 #include "nodes.hh"
 
 using std::cout;
@@ -63,6 +64,21 @@ static void print_nodes() {
 	}
 }
 
+static int check_function( const char* funcname ) {
+	int found = 0;
+
+	cout << "checking for function " << funcname << endl;
+	nodes.begin();
+	for ( int i = 0; i < nodes.size(); i++ ) {
+		FunctionDefinitionNode* fdnode = (FunctionDefinitionNode*) nodes.at( i );
+		if ( fdnode->getName().compare( funcname ) == 0 ) {
+			cout << "found function!" << endl;
+			found = 1;
+		}
+	}
+	return found;
+}
+
 int main( int argc, char* argv[] ) {
 	//yydebug = 1;
 	yyparse();
@@ -97,7 +113,7 @@ expression:
 
 operation:
 	DEFFN function { cout << level << " found definition for function: " << $2 << endl; store_symbol( $2 ); store_node_deffn( $2 ); } args
-	| function { cout << level << " found function call: " << $1 << endl; } args
+	| function { cout << level << " found function call: " << $1 << endl; if ( !check_function( $1 ) ) { yyerror( "undefined function" ); } } args
 	;
 
 args:
