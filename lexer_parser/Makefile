@@ -7,14 +7,17 @@ YACC = bison
 
 all: parser
 
-parser: lexer.o parser.o nodes.o
-	$(CXX) -o parser lexer.o parser.o nodes.o $(LDFLAGS)
+parser: lexer.o parser_help.o parser.o nodes.o
+	$(CXX) -o parser lexer.o parser_help.o parser.o nodes.o $(LDFLAGS)
 
 nodes.o: nodes.cc nodes.hh
 	$(CXX) -c $(CFLAGS) nodes.cc
 
 lexer.o: lexer.c parser.cc
 	$(CC) -c $(CFLAGS) lexer.c
+
+parser_help.o: parser_help.cc parser_help.hh
+	$(CXX) -c $(CFLAGS) parser_help.cc
 
 parser.o: parser.cc parser.hh
 	$(CXX) -c $(CFLAGS) parser.cc

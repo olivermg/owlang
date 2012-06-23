@@ -5,23 +5,25 @@ using std::string;
 using llvm::Value;
 
 class Node {
-public:
+	public:
 	virtual ~Node();
 	virtual Value* codeGen();
 };
 
 class FunctionDefinitionNode: public Node {
-private:
+	private:
 	string name;
-public:
+
+	public:
 	FunctionDefinitionNode( string funcname );
 	virtual string getName();
 };
 
 class FunctionCallNode: public Node {
-private:
+	private:
 	string name;
-public:
+
+	public:
 	FunctionCallNode( string funcname );
 	virtual string getName();
 };
