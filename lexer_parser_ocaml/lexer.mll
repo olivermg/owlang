@@ -1,16 +1,19 @@
 {
+	open Parser
 }
 
-rule translate = parse
-        | "current_directory" { print_string ( Sys.getcwd() ); translate lexbuf }
-        | _ as c { print_char c; translate lexbuf }
-        | eof { () }
+rule token = parse
+	| [ ' ' '\t' '\n' ]+ { token lexbuf }
+	| [ '0' - '9' ]+ { NUMBER }
+	| "set" { SET }
+	(* | _ { token lexbuf } *)
+	| eof { EOF }
 
 {
         let main () =
                 let lexbuf = Lexing.from_channel stdin in
-                translate lexbuf;
-                Printf.printf "bla"
+                Parser.program token lexbuf;
+                Printf.printf "\nend of parsing.\n"
 
         let _ = Printexc.print main ()
 }
