@@ -3,11 +3,15 @@
 }
 
 rule token = parse
+	| "deffn" { DEFFN }
+	| "print" { PRINT }
+	| '(' { OPAREN }
+	| ')' { CPAREN }
+	| [ '0' - '9' ]+ as num { NUMBER (int_of_string num) }
+	| [ 'a' - 'z' ][ 'a' - 'z' 'A' - 'Z' '0' - '9' ]* as id { IDENTIFIER id }
 	| [ ' ' '\t' '\n' ]+ { token lexbuf }
-	| [ '0' - '9' ]+ { NUMBER }
-	| "set" { SET }
-	(* | _ { token lexbuf } *)
 	| eof { EOF }
+	(* | _ { token lexbuf } *)
 
 {
         let main () =
