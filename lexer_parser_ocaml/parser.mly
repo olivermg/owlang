@@ -1,10 +1,21 @@
+%{
+	type argtype =
+		Stringarg of string
+		| Intarg of int
+
+	let rec printargs l = match l with
+		[] -> Printf.printf "\n"
+		| Intarg n :: xs -> Printf.printf "%i " n; printargs xs
+		| Stringarg s :: xs -> Printf.printf "%s " s; printargs xs
+%}
+
 %token DEFFN PRINT OPAREN CPAREN EOF
 %token <string> IDENTIFIER
 %token <int> NUMBER
 
 %type <string> func
 %type <string> message
-%type <int list> args
+%type <argtype list> args
 
 %type <unit> program
 
@@ -21,19 +32,15 @@ expression:
 	;
 
 operation:
-	DEFFN func args { Printf.printf "defining function %s\n" $2;
-		let rec f l = match l with
-			[] -> ()
-			| x::xs -> Printf.printf "%i " x; f xs; in
-				f $3 }
+	DEFFN func args { Printf.printf "defining function %s with args " $2; printargs $3 }
 	| PRINT message { Printf.printf "printing %s\n" $2 }
-	| func args { Printf.printf "calling function %s\n" $1 }
+	| func args { Printf.printf "calling function %s with args " $1; printargs $2 }
 	;
 
-args: { [ 1 ] }
-	| args IDENTIFIER { [ 2 ] }
-	| args NUMBER { [ 3 ] }
-	| args expression { [ 4 ] }
+args: { [ ] }
+	| args IDENTIFIER { Stringarg $2 :: $1 }
+	| args NUMBER { Intarg $2 :: $1 }
+	| args expression { $1 }
 	;
 
 func: IDENTIFIER  { $1 }
