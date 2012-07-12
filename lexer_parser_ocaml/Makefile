@@ -1,5 +1,6 @@
 CC=ocamlc.opt
 NATIVECC=ocamlopt.opt
+OCAMLBUILD=ocamlbuild
 YACC=ocamlyacc
 LEX=ocamllex
 RM=rm
@@ -24,14 +25,17 @@ parser.mli: parser.mly
 
 .PHONY: clean
 clean:
+	$(OCAMLBUILD) -clean
 	$(RM) -vf *.cm[xoi] *.o program parser.mli parser.ml lexer.ml main.byte main.native
 
 
-MAINFLAGS=-I /Users/oliver/opt/llvm/current/lib/ocaml
+#MAINFLAGS=-I /Users/oliver/opt/llvm/current/lib/ocaml
 
 main.byte: main.ml
-	$(CC) -cc g++ $(MAINFLAGS) -w A llvm.cma main.ml -o main.byte
+	$(OCAMLBUILD) -cflags -cc,g++,-I,/Users/oliver/opt/llvm/current/lib/ocaml -lflags -cc,g++,-I,/Users/oliver/opt/llvm/current/lib/ocaml -lib llvm main.byte
+	#$(CC) -cc g++ $(MAINFLAGS) -w A llvm.cma main.ml -o main.byte
 
 main.native: main.ml
-	$(NATIVECC) -cc g++ $(MAINFLAGS) -w A llvm.cmxa main.ml -o main.native
+	$(OCAMLBUILD) -cflags -cc,g++,-I,/Users/oliver/opt/llvm/current/lib/ocaml -lflags -cc,g++,-I,/Users/oliver/opt/llvm/current/lib/ocaml -lib llvm main.native
+	#$(NATIVECC) -cc g++ $(MAINFLAGS) -w A llvm.cmxa main.ml -o main.native
 
