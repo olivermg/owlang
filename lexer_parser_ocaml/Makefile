@@ -4,6 +4,9 @@ OCAMLBUILD=ocamlbuild
 YACC=ocamlyacc
 LEX=ocamllex
 RM=rm
+LLVMAS=llvm-as
+LLC=llc
+CLANG=clang
 
 program: lexer.cmo parser.cmo
 	$(CC) -w A -o program parser.cmo lexer.cmo
@@ -26,7 +29,7 @@ parser.mli: parser.mly
 .PHONY: clean
 clean:
 	$(OCAMLBUILD) -clean
-	$(RM) -vf *.cm[xoi] *.o program parser.mli parser.ml lexer.ml main.byte main.native
+	$(RM) -vf *.cm[xoi] *.o program parser.mli parser.ml lexer.ml main.byte main.native main-program*
 
 
 #MAINFLAGS=-I /Users/oliver/opt/llvm/current/lib/ocaml
@@ -38,4 +41,17 @@ main.byte: main.ml
 main.native: main.ml
 	$(OCAMLBUILD) -cflags -cc,g++,-I,/Users/oliver/opt/llvm/current/lib/ocaml -lflags -cc,g++,-I,/Users/oliver/opt/llvm/current/lib/ocaml -lib llvm main.native
 	#$(NATIVECC) -cc g++ $(MAINFLAGS) -w A llvm.cmxa main.ml -o main.native
+
+
+main-program.ll: main.native
+	./main.native 2>main-program.ll
+
+main-program.bc: main-program.ll
+	$(LLVMAS) main-program.ll
+
+main-program.s: main-program.bc
+	$(LLC) main-program.bc
+
+main-program: main-program.s
+	$(CLANG) -O0 -o main-program main-program.s
 
