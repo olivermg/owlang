@@ -1,4 +1,6 @@
 %{
+        open Ast
+
 	type argtype =
 		Stringarg of string
 		| Intarg of int
