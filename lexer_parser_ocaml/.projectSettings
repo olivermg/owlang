@@ -6,6 +6,6 @@
 		<item value="-cc,g++,-I,/Users/oliver/opt/llvm/current/lib/ocaml" key="ocamlbuildProjectCompilerFlags"/>
 		<item value="" key="ocamlbuildProjectOtherFlags"/>
 		<item value="true" key="ocamlbuildGenerateTypeInfo"/>
-		<item value="main.native" key="ocamlbuildProjectTargets"/>
+		<item value="main.native,lexer.native,lexer.byte" key="ocamlbuildProjectTargets"/>
 	</section>
 </section>

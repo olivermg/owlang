@@ -1,5 +1,5 @@
 %{
-        open Ast
+	open Ast
 
 	type argtype =
 		Stringarg of string
